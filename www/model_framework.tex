@@ -1,0 +1,23 @@
+\documentclass{standalone}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz-network}
+
+\input{colors.tex}
+
+\begin{document}
+  \begin{tikzpicture}[scale=0.66]
+    \node at (-0.75, 0) (S) [shape=rectangle, fill=S] {$S$};
+    \node at (1, 0) (E) [shape=rectangle, fill=E] {$E$};
+    \node at (4,  0.66) (Is) [shape=rectangle, fill=Is] {$I_{symptomatic}$};
+    \node at (4, -0.66) (Ia) [shape=rectangle, fill=Ia] {$I_{asymptomatic}$};
+    \node at (7,  0.66) (D) [shape=rectangle, fill=D] {$D$};
+    \node at (7, -0.66) (R) [shape=rectangle, fill=R] {$R$};
+
+    \Edge[Direct](S.east)(E.west)
+    \Edge[Direct](E.east)(Is.west)
+    \Edge[Direct](E.east)(Ia.west)
+    \Edge[Direct](Is.east)(R.west)
+    \Edge[Direct](Is.east)(D.west)
+    \Edge[Direct](Ia.east)(R.west)
+  \end{tikzpicture}
+\end{document}

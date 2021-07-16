@@ -1,0 +1,24 @@
+\documentclass{standalone}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz-network}
+
+\input{../colors.tex}
+
+\begin{document}
+  \begin{tikzpicture}[scale=0.66]
+    \node at (0,  0.66) (Is) [shape=rectangle, fill=Is] {$I_{symptomatic}$};
+    \node at (0, -0.66) (Ia) [shape=rectangle, fill=Ia] {$I_{asymptomatic}$};
+    \node at (4, -0.66) (R) [shape=rectangle, fill=R] {$R$};
+
+    \node at (0,  -2.5) (Iav) [shape=rectangle, fill=Is] {$I_{asymptomatic}$};
+    \node at (4,  -2.5) (Rv) [shape=rectangle, fill=R] {$R$};
+
+    \draw[very thick, color=vuln] (-1.85,-1.8) rectangle (4.55,-3.15);
+    \node at (-2.1,-1.93) [above right, color=vuln]{\scriptsize vulnerable};
+
+    \Edge[Direct, label=$\gamma$](Is.east)(R.west)
+    \Edge[Direct, label=$\gamma$](Ia.east)(R.west)
+    \Edge[Direct, label=$3\gamma$](Iav.east)(Rv.west)
+
+  \end{tikzpicture}
+\end{document}
