@@ -1,0 +1,14 @@
+name: COVID-19_Contact_Network_Model
+title: COVID-19_Contact_Network_Model
+username:
+account: michalska-smith
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2477342
+bundleId: 4820095
+url: https://michalska-smith.shinyapps.io/COVID-19_Contact_Network_Model/
+when: 1626294130.29619
+lastSyncTime: 1626294130.29621
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .httr-oauth-SUSPENDED|tmp.RData

@@ -1,0 +1,16 @@
+\documentclass{standalone}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz-network}
+
+\input{../colors.tex}
+
+\begin{document}
+  \begin{tikzpicture}[scale=0.66]
+    \node at (0, 0) (E) [shape=rectangle, fill=E] {$E$};
+    \node at (4.5,  0.66) (Is) [shape=rectangle, fill=Is] {$I_{symptomatic}$};
+    \node at (4.5, -0.66) (Ia) [shape=rectangle, fill=Ia] {$I_{asymptomatic}$};
+
+    \Edge[Direct, label=$\sigma (1 - \rho)$](E.east)(Is.west)
+    \Edge[Direct, label=$\sigma \rho$](E.east)(Ia.west)
+  \end{tikzpicture}
+\end{document}

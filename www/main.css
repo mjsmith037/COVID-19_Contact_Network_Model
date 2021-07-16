@@ -1,0 +1,117 @@
+.modelimg {
+  padding: 25px 0;
+  margin: auto;
+  display: block;
+}
+
+.tooltip {
+  width: 200px;
+}
+
+.shiny-plot-output {
+  height: 90vh !important;
+}
+
+.irs-single {
+  background: #0b6884 !important;
+}
+
+.panel-default {
+  border-color: #0b6884 !important;
+}
+
+.panel-default > .panel-heading {
+  background-color: #0b6884;
+  border-color: #0b6884 !important;
+  color: #ffffff;
+}
+
+.panel-default > .panel-collapse > .panel-body {
+  border-color: #0b6884 !important;
+}
+
+.irs-min,
+.irs-max {
+  visibility: hidden !important;
+}
+
+.center {
+  max-width: 75%;
+  text-align: center;
+  margin: auto;
+  font-size: 125%;
+  padding: 5vmin;
+}
+
+#modeldesc {
+  text-align: left;
+}
+
+table td, table tr {
+  font-size: 125%;
+}
+
+.sweet-alert {
+  width: 66vw !important;
+  margin-left: -33vw !important;
+}
+
+.sweet-alert p {
+  margin-bottom: 12pt;
+}
+
+@media all and (max-width:1400px) {
+  .sweet-alert {
+    width: 96vw !important;
+    margin-left: -48vw !important;
+    left: 50% !important;
+    right: 50% !important;
+  }
+  .center {
+    max-width: 98%;
+    text-align: center;
+    margin: auto;
+    padding: 2vmin;
+  }
+}
+
+.sweet-alert p {
+  font-size: 2vmin !important;
+}
+
+.sweet-alert > h2 {
+  font-size: 4vmin !important;
+}
+
+@media all and (max-width: 1200px) and (min-width: 768px), (max-width: 325px) {
+  .runbtntext {
+    display: none;
+  }
+}
+
+@media all and (max-width: 1750px) and (min-width: 768px), (max-width: 480px) {
+  .infobtntext {
+    display: none;
+  }
+}
+
+.logoimg {
+  height: 44px;
+  padding: 2px;
+}
+
+@media all and (max-width: 1070px) {
+  .biglogo {
+    display: none;
+  }
+}
+
+@media all and (max-width: 768px) {
+  .logoimg {
+    display: none;
+  }
+}
+
+#plots div div img {
+  height: 75vh;
+}
