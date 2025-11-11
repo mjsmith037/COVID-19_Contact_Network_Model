@@ -17,8 +17,8 @@ library(kableExtra)
 library(shinyjs)
 library(jsonlite)
 
-library(googlesheets4)
-gs4_auth(cache=".secrets", email="michalsm@umn.edu")
+# library(googlesheets4)
+# gs4_auth(cache=".secrets", email="michalsm@umn.edu")
 
 library(igraph, warn.conflicts=FALSE)
 library(tidygraph, warn.conflicts=FALSE)
@@ -526,7 +526,7 @@ server <- function(input, output, session){
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
-    write_data(input, simulation_output, "sandbox")
+    # write_data(input, simulation_output, "sandbox")
     output$netplot_sandbox <- renderPlot(plot_network(full_contact_network))
     output$areaplot_sandbox <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot_sandbox <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
@@ -595,7 +595,7 @@ server <- function(input, output, session){
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
-    write_data(input, simulation_output, "scenarios")
+    # write_data(input, simulation_output, "scenarios")
     output$netplot <- renderPlot(plot_network(full_contact_network))
     output$areaplot <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
@@ -613,7 +613,7 @@ server <- function(input, output, session){
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
-    write_data(input, simulation_output, "scenario")
+    # write_data(input, simulation_output, "scenario")
     output$netplot <- renderPlot(plot_network(full_contact_network))
     output$areaplot <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
@@ -634,7 +634,7 @@ server <- function(input, output, session){
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
-    write_data(input, simulation_output, "scenario")
+    # write_data(input, simulation_output, "scenario")
     output$netplot <- renderPlot(plot_network(full_contact_network))
     output$areaplot <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
@@ -655,7 +655,7 @@ server <- function(input, output, session){
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
 
-    write_data(input, simulation_output, "scenario")
+    # write_data(input, simulation_output, "scenario")
     output$netplot <- renderPlot(plot_network(full_contact_network))
     output$areaplot <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
