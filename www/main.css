@@ -12,7 +12,30 @@
   height: 90vh !important;
 }
 
-.navbar, .irs-bar, .irs-single {
+.navbar {
+  background-color: #333333 !important;
+  color: #efefef !important;
+}
+
+.navbar > .container-fluid {
+  column-gap: 25px;
+  align-items: center !important;
+}
+
+#main_navbar > .nav-item > .nav-link {
+  color: #efefef !important;
+}
+
+.navbar-brand > div {
+  color: #efefef !important;
+}
+
+.navbar-header > span {
+  display: flex;
+  align-items: center;
+}
+
+.irs-bar, .irs-single {
   background: #0b6884 !important;
   border-color: #0b6884 !important;
 }
@@ -33,7 +56,7 @@
 .accordion-button {
   background-color: #0b6884 !important;
   border-color: #0b6884 !important;
-  color: #ffffff;
+  color: #efefef;
 }
 
 .accordion-item > .accordion-collapse > .accordion-body {

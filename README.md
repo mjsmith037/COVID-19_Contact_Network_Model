@@ -8,6 +8,6 @@ in the app. That said, this is very much a work-in-progress and the current stat
 code is far less annotated than desired.
 
 Any help in terms of identifying bugs, typos, or sources of confusion would be greatly
-appreciated, and can either be opened as issues here or sent to me via email at michalsm@umn.edu.
+appreciated, and can either be opened as issues here or sent to me via email at Michalska-Smith@pm.me.
 
 Thank you also for your understanding during the development of this repository for public use.

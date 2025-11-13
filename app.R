@@ -102,8 +102,8 @@ ui <- fluidPage(
   navbarPage(
     theme = bs_theme(bootswatch="yeti"),
     title=div("COVID Network Model", tags$script(HTML("var header = $('.navbar > .container-fluid');
-header.append('<div style=\"float:right;\"><img class=\"logoimg\" src=\"UMN_logo_M.png\"><img class=\"logoimg biglogo\" src=\"UMN_logo_rest.png\"></div>');
-header.prepend('<div style=\"float:left; padding-right: 24px;\"><a href=\"https://mcraftlab.wordpress.com/\"><img class=\"logoimg\" src=\"Craft Lab logo puma.jpg\"></a></div>');\
+header.append('<div style=\"order:1;\"><img class=\"logoimg\" src=\"UMN_logo_M.png\"><img class=\"logoimg biglogo\" src=\"UMN_logo_rest.png\"></div>');
+header.prepend('\\<a href=\"https://mcraftlab.wordpress.com/\"><img class=\"logoimg\" src=\"Craft Lab logo puma.jpg\"></a>');\
 console.log(header)"))),
     id = "main_navbar",
     #### Welcome ####

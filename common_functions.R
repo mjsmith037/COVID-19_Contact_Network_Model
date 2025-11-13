@@ -46,28 +46,31 @@ plot_network <- function(contact_network) {
   } else {
     plot_graph <- contact_network
   }
-
-  plot_graph <- plot_graph %E>% mutate(type = recode(type,
-                                                     household = "Housemates",
-                                                     between_household = "Extended Housemates",
-                                                     classmate = "Classmates",
-                                                     coworker = "Coworkers",
-                                                     bar = "Bar"))
-
+  
+  plot_graph <- plot_graph %N>%
+    mutate(vulnerable = ifelse(vulnerable, "Vulnerable", "Not Vulnerable")) %E>% 
+    mutate(type = recode(type,
+                         household = "Housemates",
+                         between_household = "Extended Housemates",
+                         classmate = "Classmates",
+                         coworker = "Coworkers",
+                         bar = "Bar"))
+  
   net <- ggraph(plot_graph, layout=plot_graph %>% igraph::layout_nicely(weights=. %E>% pull(weight))) +
     geom_edge_fan(aes(colour=type),
                   edge_alpha=0.67, edge_width=0.5,
                   end_cap=circle(radius=5, unit="pt"), start_cap=circle(radius=5, unit="pt")) +
-    geom_node_point(size=3) +
+    geom_node_point(size=3, aes(colour=vulnerable)) +
     scale_edge_colour_manual(values=my_cols) +
     guides(edge_colour=guide_legend(nrow=2, override.aes=list(edge_width=2, edge_alpha=1))) +
-    # scale_colour_manual(values=my_cols) +
+    scale_colour_manual(values=my_cols) +
     theme_graph(base_family=MAIN_FONT) +
     theme(
       text=element_text(size=16, family=MAIN_FONT),
       plot.title=element_text(face="bold", size=18),
       plot.subtitle=element_text(size=12),
       plot.caption=element_text(size=12),
+      legend.box = "veritcal",
       legend.title=element_blank(),
       legend.text=element_text(size=18),
       legend.key.size=unit(18, "pt"),
@@ -104,7 +107,7 @@ plot_area <- function(timeseries, net_size) {
       legend.margin=margin(l=18, r=18)
     ) +
     ggtitle("Change in proportion of population in each class through time")
-
+  
   return(area)
 }
 
@@ -137,6 +140,6 @@ plot_line <- function(timeseries, net_size) {
       legend.margin=margin(l=18, r=18)
     ) +
     ggtitle("Proportion of population in disease classes through time")
-
+  
   return(line)
 }
