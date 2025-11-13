@@ -12,21 +12,31 @@
   height: 90vh !important;
 }
 
-.irs-single {
+.navbar, .irs-bar, .irs-single {
   background: #0b6884 !important;
-}
-
-.panel-default {
   border-color: #0b6884 !important;
 }
 
-.panel-default > .panel-heading {
-  background-color: #0b6884;
+.irs-handle {
+  background: #0b6884 !important;
+  border-color: #0b6884 !important;
+  height: 16px !important;
+  width: 16px !important;
+  border-radius: 16px !important;
+  top: 20px !important;
+}
+
+.accordion-item {
+  border-color: #0b6884 !important;
+}
+
+.accordion-button {
+  background-color: #0b6884 !important;
   border-color: #0b6884 !important;
   color: #ffffff;
 }
 
-.panel-default > .panel-collapse > .panel-body {
+.accordion-item > .accordion-collapse > .accordion-body {
   border-color: #0b6884 !important;
 }
 

@@ -18,4 +18,4 @@ social behaviors on COVID-19 transmission.
 
 Finally, we appreciate your patience as we continue to improve this app.
 Feedback is very welcome, and can be sent along with any questions or concerns
-to michalsm@umn.edu.
+to Michalska-Smith@pm.me.

@@ -9,9 +9,8 @@ source("common_functions.R")
 source("quantify_disease_outcomes.R")
 
 library(shiny)
-library(shinyBS)
+library(bslib)
 library(shinyWidgets)
-library(shinythemes)
 library(shinyalert)
 library(kableExtra)
 library(shinyjs)
@@ -66,8 +65,8 @@ write_data <- function(input, simulation_output, source_tab) {
     values %>%
       as_tibble() %>%
       bind_cols(summarize_epidemic(simulation_output)) %>%
-    sheet_append(ss="https://docs.google.com/spreadsheets/d/1RS6-7cddLEAsdSpwCQ-UOYEggwRxVAlG8uVV2tafBQ0/edit#gid=0",
-                 sheet="output_v2_scenarios")
+      sheet_append(ss="https://docs.google.com/spreadsheets/d/1RS6-7cddLEAsdSpwCQ-UOYEggwRxVAlG8uVV2tafBQ0/edit#gid=0",
+                   sheet="output_v2_scenarios")
   } else if (source_tab == "sandbox") {
     # fill unused parameters with NAs
     values <- within(values, rm("scenario", "scenario_params"))
@@ -85,8 +84,8 @@ write_data <- function(input, simulation_output, source_tab) {
     values %>%
       as_tibble() %>%
       bind_cols(summarize_epidemic(simulation_output)) %>%
-    sheet_append(ss="https://docs.google.com/spreadsheets/d/1RS6-7cddLEAsdSpwCQ-UOYEggwRxVAlG8uVV2tafBQ0/edit#gid=0",
-                 sheet="output_v2_sandbox")
+      sheet_append(ss="https://docs.google.com/spreadsheets/d/1RS6-7cddLEAsdSpwCQ-UOYEggwRxVAlG8uVV2tafBQ0/edit#gid=0",
+                   sheet="output_v2_sandbox")
   }
 }
 
@@ -95,13 +94,13 @@ ui <- fluidPage(
     # tags$link(rel = "shortcut icon", type = "image/png", href = "image.png"),
     tags$title("COVID Network Model")
   ),
-  withMathJax(), useShinyalert(),
+  withMathJax(),
   includeCSS("www/main.css"),
   includeCSS("www/introjs.min.css"),
   includeScript("www/intro.min.js"),
   includeScript("www/app.js"),
   navbarPage(
-    theme = shinytheme("yeti"),
+    theme = bs_theme(bootswatch="yeti"),
     title=div("COVID Network Model", tags$script(HTML("var header = $('.navbar > .container-fluid');
 header.append('<div style=\"float:right;\"><img class=\"logoimg\" src=\"UMN_logo_M.png\"><img class=\"logoimg biglogo\" src=\"UMN_logo_rest.png\"></div>');
 header.prepend('<div style=\"float:left; padding-right: 24px;\"><a href=\"https://mcraftlab.wordpress.com/\"><img class=\"logoimg\" src=\"Craft Lab logo puma.jpg\"></a></div>');\
@@ -116,46 +115,42 @@ console.log(header)"))),
                sidebarPanel(
                  width=3, id='step2',
                  div(id="step3",
-                     tipify(sliderInput(inputId = "transmission_rate", value = 0.5, min = 0, max = 1, step=0.05,
-                                        label = "Transmission rate \\(\\beta\\)"),
-                            "The liklihood of an interaction between an infectious individual and susceptible individual resulting in infection",
-                            placement="right")
+                     tooltip(sliderInput(inputId = "transmission_rate", value = 0.5, min = 0, max = 1, step=0.05,
+                                         label = "Transmission rate \\(\\beta\\)"),
+                             "The liklihood of an interaction between an infectious individual and susceptible individual resulting in infection",
+                             placement="right")
                  ),
-                 tipify(sliderInput(inputId="sigma_0", value=3.7, min=3.3, max=4, step=0.1,
-                                    label="Length of latent period \\(1/\\sigma\\)"),
-                        "Average number of days from exposure to the virus to becoming infectious",
-                        placement="right"),
-                 tipify(sliderInput(inputId="rho_0", value=0.25, min=0.18, max=0.31, step=0.01,
-                                    label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
-                        "",
-                        placement="right"),
+                 tooltip(sliderInput(inputId="sigma_0", value=3.7, min=3.3, max=4, step=0.1,
+                                     label="Length of latent period \\(1/\\sigma\\)"),
+                         "Average number of days from exposure to the virus to becoming infectious",
+                         placement="right"),
+                 sliderInput(inputId="rho_0", value=0.25, min=0.18, max=0.31, step=0.01,
+                             label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
                  div(id="step4",
-                     tipify(sliderInput(inputId="gamma_0", value=3.5, min=3.1, max=4, step=0.1,
-                                        label="Length of infectious period \\(1/\\gamma\\)"),
-                            "Average number of days from becoming infectious to no longer transmitting the virus",
-                            placement="right")
+                     tooltip(sliderInput(inputId="gamma_0", value=3.5, min=3.1, max=4, step=0.1,
+                                         label="Length of infectious period \\(1/\\gamma\\)"),
+                             "Average number of days from becoming infectious to no longer transmitting the virus",
+                             placement="right")
                  ),
-                 tipify(sliderInput(inputId = "mu_0", value = 0.001, min = 0, max = 0.1,
-                                    label = "Death rate of symptomatic infectious individuals \\(\\mu\\)"),
-                        "",
-                        placement="right"),
-                 tipify(sliderInput(inputId = "nu_0", value = 0.14, min = 0, max = 0.33,
-                                    label = "Additional death rate for vulnerable individuals \\(\\nu\\)"),
-                        "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
-                        placement="right"),
+                 sliderInput(inputId = "mu_0", value = 0.001, min = 0, max = 0.1,
+                             label = "Death rate of symptomatic infectious individuals \\(\\mu\\)"),
+                 tooltip(sliderInput(inputId = "nu_0", value = 0.14, min = 0, max = 0.33,
+                                     label = "Additional death rate for vulnerable individuals \\(\\nu\\)"),
+                         "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
+                         placement="right"),
                  fluidRow(column(width=6, div(actionButton("info_intro", span("Tutorial", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                           column(width=6, div(id="step5", style="height:4vh;",
                                               actionButton("recalc_intro", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))
-
+                 
                ),
                mainPanel(width=9,
                          fluidRow(id="plots",
                                   column(width=5, div(id="step6", plotOutput("netplot_intro"))),
                                   column(width=7, div(id="step7",
-                                                                     tabsetPanel(
-                                                                       tabPanel("Epidemic Curves", plotOutput("lineplot_intro")),
-                                                                       tabPanel("Proportion of Population", plotOutput("areaplot_intro"))
-                                                                     )
+                                                      tabsetPanel(
+                                                        tabPanel("Epidemic Curves", plotOutput("lineplot_intro")),
+                                                        tabPanel("Proportion of Population", plotOutput("areaplot_intro"))
+                                                      )
                                   ))
                          ),
                          fluidRow(id="table")
@@ -168,77 +163,71 @@ console.log(header)"))),
       sidebarLayout(
         sidebarPanel(
           width=3,
-          bsCollapse(
-            id="sandbox", multiple=TRUE, open="Core Disease Transmission Parameters",
-            bsCollapsePanel(
+          accordion(
+            id="sandbox", open="Core Disease Transmission Parameters",
+            accordion_panel(
               "Core Disease Transmission Parameters",
-              tipify(sliderInput(inputId = "number_of_households",
-                                 label = "Number of households to simulate",
-                                 value = 100, min = 50, max = 500, step=50),
-                     "",
-                     placement="right"),
-              tipify(sliderTextInput(inputId = "background_transmission_rate",
-                                     label = "Background transmission rate \\(\\beta_b\\)",
-                                     selected = "Medium",
-                                     choices = c("Very Low", "Low", "Medium", "High", "Very High")),
-                     "General community transmission otherwise unaccounted for",
-                     placement="right"),
-              tipify(sliderInput(inputId="sigma", value=3.7, min=3.3, max=4, step=0.1,
-                                 label="Length of latent period \\(1/\\sigma\\)"),
-                     "Average number of days from exposure to the virus to becoming infectious",
-                     placement="right"),
-              tipify(sliderInput(inputId="rho", value=0.25, min=0.18, max=0.31, step=0.01,
-                                 label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
-                     "",
-                     placement="right"),
-              tipify(sliderInput(inputId="gamma", value=3.5, min=3.1, max=4, step=0.1,
-                                 label="Length of infectious period \\(1/\\gamma\\)"),
-                     "Average number of days from becoming infectious to no longer transmitting the virus",
-                     placement="right"),
-              tipify(sliderInput(inputId = "mu",
-                                 label = "Death rate of symptomatic infectious individuals \\(\\mu\\)",
-                                 value = 0.001, min = 0, max = 0.1),
-                     "",
-                     placement="right"),
-              tipify(sliderInput(inputId = "nu",
-                                 label = "Additional death rate for vulnerable individuals \\(\\nu\\)",
-                                 value = 0.14, min = 0, max = 0.33),
-                     "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
-                     placement="right")
+              sliderInput(inputId = "number_of_households",
+                          label = "Number of households to simulate",
+                          value = 100, min = 50, max = 500, step=50),
+              tooltip(sliderTextInput(inputId = "background_transmission_rate",
+                                      label = "Background transmission rate \\(\\beta_b\\)",
+                                      selected = "Medium",
+                                      choices = c("Very Low", "Low", "Medium", "High", "Very High")),
+                      "General community transmission otherwise unaccounted for",
+                      placement="right"),
+              tooltip(sliderInput(inputId="sigma", value=3.7, min=3.3, max=4, step=0.1,
+                                  label="Length of latent period \\(1/\\sigma\\)"),
+                      "Average number of days from exposure to the virus to becoming infectious",
+                      placement="right"),
+              sliderInput(inputId="rho", value=0.25, min=0.18, max=0.31, step=0.01,
+                          label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
+              tooltip(sliderInput(inputId="gamma", value=3.5, min=3.1, max=4, step=0.1,
+                                  label="Length of infectious period \\(1/\\gamma\\)"),
+                      "Average number of days from becoming infectious to no longer transmitting the virus",
+                      placement="right"),
+              sliderInput(inputId = "mu",
+                          label = "Death rate of symptomatic infectious individuals \\(\\mu\\)",
+                          value = 0.001, min = 0, max = 0.1),
+              tooltip(sliderInput(inputId = "nu",
+                                  label = "Additional death rate for vulnerable individuals \\(\\nu\\)",
+                                  value = 0.14, min = 0, max = 0.33),
+                      "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
+                      placement="right")
             ),
-            bsCollapsePanel(
+            accordion_panel(
               "Household-Merging",
-              tipify(sliderInput(inputId = "between_household_transmission_rate",
-                                 label = "Between household transmission rate \\(\\beta_h\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely you are to be infected by members of other households compared to your own",
-                     placement="right"),
-              tipify(sliderInput(inputId = "number_households_merged",
-                                 label = "Number of other households to join with as a socially monogomous unit",
-                                 value = 1, min = 0, max = 10, step=1),
-                     "The number of other households that any given household interacts with",
-                     placement="right")
+              tooltip(sliderInput(inputId = "between_household_transmission_rate",
+                                  label = "Between household transmission rate \\(\\beta_h\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely you are to be infected by members of other households compared to your own",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "number_households_merged",
+                                  label = "Number of other households to join with as a socially monogomous unit",
+                                  value = 1, min = 0, max = 10, step=1),
+                      "The number of other households that any given household interacts with",
+                      placement="right")
             ),
-            bsCollapsePanel(
+            accordion_panel(
               "In-person Schooling",
-              tipify(sliderInput(inputId = "classmate_transmission_rate",
-                                 label = "Classmate transmission rate \\(\\beta_c\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely a child is to be infected by classmates vs by a member of their household",
-                     placement="right"),
-              tipify(sliderInput(inputId = "approx_classroom_size",
-                                 label = "Approximate size of classrooms",
-                                 value = 25, min = 10, max = 40),
-                     "for children age 5-19",
-                     placement="right")
+              tooltip(sliderInput(inputId = "classmate_transmission_rate",
+                                  label = "Classmate transmission rate \\(\\beta_c\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely a child is to be infected by classmates vs by a member of their household",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "approx_classroom_size",
+                                  label = "Approximate size of classrooms",
+                                  value = 25, min = 10, max = 40),
+                      "for children age 5-19",
+                      placement="right")
             ),
-            bsCollapsePanel(
+            accordion_panel(
               "In-person Work",
-              tipify(sliderInput(inputId = "coworker_transmission_rate",
-                                 label = "Coworker transmission rate \\(\\beta_w\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely someone is to be infected by coworkers vs by a member of their household",
-                     placement="right")
+              tooltip(sliderInput(inputId = "coworker_transmission_rate",
+                                  label = "Coworker transmission rate \\(\\beta_w\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely someone is to be infected by coworkers vs by a member of their household",
+                      placement="right")
             )),
           fluidRow(column(width=6, div(actionButton("info_sandbox", span("Show Info", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                    column(width=6, div(actionButton("recalc_sandbox", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))),
@@ -246,7 +235,7 @@ console.log(header)"))),
                   fluidRow(id="plots",
                            column(width=5, plotOutput("netplot_sandbox"),
                                   div(downloadButton("download_sandbox", span("Download output (", code(".RData", style="background-color:transparent; color:#000000;"), "file)"),
-                                                   icon=icon("download"), style="float:right; background-color:#50b99a"))),
+                                                     icon=icon("download"), style="float:right; background-color:#50b99a"))),
                            column(width=7,
                                   tabsetPanel(
                                     tabPanel("Epidemic Curves", plotOutput("lineplot_sandbox")),
@@ -264,106 +253,100 @@ console.log(header)"))),
       sidebarLayout(
         sidebarPanel(
           width=3,
-          bsCollapse(
+          accordion(
             id="scenario_params", open="Core Disease Parameters",
-            bsCollapsePanel(
+            accordion_panel(
               "Core Disease Parameters",
-              tipify(sliderInput(inputId = "number_of_households_1",
-                                 label = "Number of households to simulate",
-                                 value = 100, min = 50, max = 500, step=50),
-                     "",
-                     placement="right"),
-              tipify(sliderTextInput(inputId = "background_transmission_rate_1",
-                                     label = "Background transmission rate \\(\\beta_b\\)",
-                                     selected = "Medium",
-                                     choices = c("Very Low", "Low", "Medium", "High", "Very High")),
-                     "General community transmission otherwise unaccounted for",
-                     placement="right"),
-              tipify(sliderInput(inputId="sigma_1", value=3.7, min=3.3, max=4, step=0.1,
-                                 label="Length of latent period \\(1/\\sigma\\)"),
-                     "Average number of days from exposure to the virus to becoming infectious",
-                     placement="right"),
-              tipify(sliderInput(inputId="rho_1", value=0.25, min=0.18, max=0.31, step=0.01,
-                                 label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
-                     "",
-                     placement="right"),
-              tipify(sliderInput(inputId="gamma_1", value=3.5, min=3.1, max=4, step=0.1,
-                                 label="Length of infectious period \\(1/\\gamma\\)"),
-                     "Average number of days from becoming infectious to no longer transmitting the virus",
-                     placement="right"),
-              tipify(sliderInput(inputId = "mu_1",
-                                 label = "Death rate of symptomatic infectious individuals \\(\\mu\\)",
-                                 value = 0.001, min = 0, max = 0.1, step=0.05),
-                     "",
-                     placement="right"),
-              tipify(sliderInput(inputId = "nu_1",
-                                 label = "Additional death rate for vulnerable individuals \\(\\nu\\)",
-                                 value = 0.14, min = 0, max = 0.33),
-                     "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
-                     placement="right"),
+              sliderInput(inputId = "number_of_households_1",
+                          label = "Number of households to simulate",
+                          value = 100, min = 50, max = 500, step=50),
+              tooltip(sliderTextInput(inputId = "background_transmission_rate_1",
+                                      label = "Background transmission rate \\(\\beta_b\\)",
+                                      selected = "Medium",
+                                      choices = c("Very Low", "Low", "Medium", "High", "Very High")),
+                      "General community transmission otherwise unaccounted for",
+                      placement="right"),
+              tooltip(sliderInput(inputId="sigma_1", value=3.7, min=3.3, max=4, step=0.1,
+                                  label="Length of latent period \\(1/\\sigma\\)"),
+                      "Average number of days from exposure to the virus to becoming infectious",
+                      placement="right"),
+              sliderInput(inputId="rho_1", value=0.25, min=0.18, max=0.31, step=0.01,
+                          label="The proportion of exposed individuals that become symptomatic \\(\\rho\\)"),
+              tooltip(sliderInput(inputId="gamma_1", value=3.5, min=3.1, max=4, step=0.1,
+                                  label="Length of infectious period \\(1/\\gamma\\)"),
+                      "Average number of days from becoming infectious to no longer transmitting the virus",
+                      placement="right"),
+              sliderInput(inputId = "mu_1",
+                          label = "Death rate of symptomatic infectious individuals \\(\\mu\\)",
+                          value = 0.001, min = 0, max = 0.1, step=0.05),
+              tooltip(sliderInput(inputId = "nu_1",
+                                  label = "Additional death rate for vulnerable individuals \\(\\nu\\)",
+                                  value = 0.14, min = 0, max = 0.33),
+                      "How much more likely are vulnerable people to die from COVID-19 compared to non-vulnerable people?",
+                      placement="right"),
               fluidRow(column(width=6, div(actionButton("info_0", span("Show Scenario Info", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                        column(width=6, div(actionButton("recalc_0", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))
             )
           ),
-          bsCollapse(
-            id="scenario",
-            bsCollapsePanel(
+          accordion(
+            id="scenario", open=FALSE, multiple=FALSE,
+            accordion_panel(
               "1. Adding Household-Merging",
-              tipify(sliderInput(inputId = "between_household_transmission_rate_1",
-                                 label = "Between household transmission rate \\(\\beta_h\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely you are to be infected by members of other households compared to your own",
-                     placement="right"),
-              tipify(sliderInput(inputId = "number_households_merged_1",
-                                 label = "Number of other households to join with as a socially monogomous unit",
-                                 value = 1, min = 0, max = 10, step=1),
-                     "The number of other households that any given household interacts with",
-                     placement="right"),
+              tooltip(sliderInput(inputId = "between_household_transmission_rate_1",
+                                  label = "Between household transmission rate \\(\\beta_h\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely you are to be infected by members of other households compared to your own",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "number_households_merged_1",
+                                  label = "Number of other households to join with as a socially monogomous unit",
+                                  value = 1, min = 0, max = 10, step=1),
+                      "The number of other households that any given household interacts with",
+                      placement="right"),
               fluidRow(column(width=6, div(actionButton("info_1", span("Show Scenario Info", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                        column(width=6, div(actionButton("recalc_1", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))
             ),
-            bsCollapsePanel(
+            accordion_panel(
               "2. Household-Merging vs. School",
-              tipify(sliderInput(inputId = "between_household_transmission_rate_2",
-                                 label = "Between household transmission rate \\(\\beta_h\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely you are to be infected by members of other households compared to your own",
-                     placement="right"),
-              tipify(sliderInput(inputId = "number_households_merged_2",
-                                 label = "Number of households to join with into a socially monogomous unit",
-                                 value = 1, min = 0, max = 10, step=1),
-                     "The number of other households that any given household interacts with",
-                     placement="right"),
-              tipify(sliderInput(inputId = "classmate_transmission_rate_1",
-                                 label = "Classmate transmission rate \\(\\beta_c\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely a child is to be infected by classmates vs by a member of their household",
-                     placement="right"),
-              tipify(sliderInput(inputId = "approx_classroom_size_1",
-                                 label = "Approximate size of classrooms",
-                                 value = 25, min = 10, max = 40),
-                     "for children age 5-19",
-                     placement="right"),
+              tooltip(sliderInput(inputId = "between_household_transmission_rate_2",
+                                  label = "Between household transmission rate \\(\\beta_h\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely you are to be infected by members of other households compared to your own",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "number_households_merged_2",
+                                  label = "Number of households to join with into a socially monogomous unit",
+                                  value = 1, min = 0, max = 10, step=1),
+                      "The number of other households that any given household interacts with",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "classmate_transmission_rate_1",
+                                  label = "Classmate transmission rate \\(\\beta_c\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely a child is to be infected by classmates vs by a member of their household",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "approx_classroom_size_1",
+                                  label = "Approximate size of classrooms",
+                                  value = 25, min = 10, max = 40),
+                      "for children age 5-19",
+                      placement="right"),
               fluidRow(column(width=6, div(actionButton("info_2", span("Show Scenario Info", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                        column(width=6, div(actionButton("recalc_2", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))
             ),
-            bsCollapsePanel(
+            accordion_panel(
               "3. School vs. Work",
-              tipify(sliderInput(inputId = "classmate_transmission_rate_2",
-                                 label = "Classmate transmission rate \\(\\beta_c\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely a child is to be infected by classmates vs by a member of their household",
-                     placement="right"),
-              tipify(sliderInput(inputId = "approx_classroom_size_2",
-                                 label = "Approximate size of classrooms",
-                                 value = 25, min = 10, max = 40),
-                     "The approximate size of schools/classrooms for children age 5-19",
-                     placement="right"),
-              tipify(sliderInput(inputId = "coworker_transmission_rate_1",
-                                 label = "Coworker transmission rate \\(\\beta_w\\)",
-                                 value = 0.05, min = 0, max = 1, step=0.05),
-                     "How much less likely someone is to be infected by coworkers vs by a member of their household",
-                     placement="right"),
+              tooltip(sliderInput(inputId = "classmate_transmission_rate_2",
+                                  label = "Classmate transmission rate \\(\\beta_c\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely a child is to be infected by classmates vs by a member of their household",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "approx_classroom_size_2",
+                                  label = "Approximate size of classrooms",
+                                  value = 25, min = 10, max = 40),
+                      "The approximate size of schools/classrooms for children age 5-19",
+                      placement="right"),
+              tooltip(sliderInput(inputId = "coworker_transmission_rate_1",
+                                  label = "Coworker transmission rate \\(\\beta_w\\)",
+                                  value = 0.05, min = 0, max = 1, step=0.05),
+                      "How much less likely someone is to be infected by coworkers vs by a member of their household",
+                      placement="right"),
               fluidRow(column(width=6, div(actionButton("info_3", span("Show Scenario Info", class="infobtntext"), icon=icon("info-circle"), style="float:left; background-color:#bc4b51"))),
                        column(width=6, div(actionButton("recalc_3", span("Run Simulation", class="runbtntext"), icon=icon("play"), style="float:right; background-color:#7b678e"))))
             ))),
@@ -387,39 +370,39 @@ console.log(header)"))),
 )
 
 server <- function(input, output, session){
-
+  
   #### update sliders across tabs ####
   observe({updateSliderInput(session, "number_of_households_1", value=input$number_of_households)})
   observe({updateSliderInput(session, "number_of_households", value=input$number_of_households_1)})
-
+  
   observe({updateSliderTextInput(session, "background_transmission_rate_1", selected=input$background_transmission_rate)})
   observe({updateSliderTextInput(session, "background_transmission_rate", selected=input$background_transmission_rate_1)})
-
+  
   observe({updateSliderInput(session, "sigma_0", value=input$sigma)})
   observe({updateSliderInput(session, "sigma", value=input$sigma_0)})
   observe({updateSliderInput(session, "sigma_1", value=input$sigma)})
   observe({updateSliderInput(session, "sigma", value=input$sigma_1)})
-
+  
   observe({updateSliderInput(session, "rho_0", value=input$rho)})
   observe({updateSliderInput(session, "rho", value=input$rho_0)})
   observe({updateSliderInput(session, "rho_1", value=input$rho)})
   observe({updateSliderInput(session, "rho", value=input$rho_1)})
-
+  
   observe({updateSliderInput(session, "gamma_0", value=input$gamma)})
   observe({updateSliderInput(session, "gamma", value=input$gamma_0)})
   observe({updateSliderInput(session, "gamma_1", value=input$gamma)})
   observe({updateSliderInput(session, "gamma", value=input$gamma_1)})
-
+  
   observe({updateSliderInput(session, "mu_0", value=input$mu)})
   observe({updateSliderInput(session, "mu", value=input$mu_0)})
   observe({updateSliderInput(session, "mu_1", value=input$mu)})
   observe({updateSliderInput(session, "mu", value=input$mu_1)})
-
+  
   observe({updateSliderInput(session, "nu_0", value=input$nu)})
   observe({updateSliderInput(session, "nu", value=input$nu_0)})
   observe({updateSliderInput(session, "nu_1", value=input$nu)})
   observe({updateSliderInput(session, "nu", value=input$nu_1)})
-
+  
   #### Tutorial ####
   session$sendCustomMessage(type="setTutorialContent", message=list(steps=toJSON(steps)))
   # only show tutorial on first open of tab
@@ -442,12 +425,12 @@ server <- function(input, output, session){
                                                            rep(FALSE, with_graph(full_contact_network, graph_order())),
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            0, 1/input$sigma_0, input$rho_0, 1/input$gamma_0, input$mu_0, input$nu_0)
-    output$netplot_intro <- renderPlot(ggraph(full_contact_network, layout=full_contact_network %>% igraph::layout_nicely(weight=. %E>% pull(weight))) +
+    output$netplot_intro <- renderPlot(ggraph(full_contact_network, layout=full_contact_network %>% igraph::layout_nicely(weights=. %E>% pull(weight))) +
                                          geom_edge_fan(aes(colour=type), alpha=0.25, show.legend=FALSE) +
                                          geom_node_point(size=3) +
                                          scale_edge_colour_manual(values=my_cols) +
                                          guides(edge_colour=guide_legend(nrow=2, override.aes=list(edge_width=2))) +
-                                         scale_colour_manual(values=my_cols) +
+                                         # scale_colour_manual(values=my_cols) +
                                          theme_graph(base_family=MAIN_FONT) +
                                          theme(
                                            text=element_text(size=16, family=MAIN_FONT),
@@ -464,7 +447,7 @@ server <- function(input, output, session){
     output$areaplot_intro <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))
     output$lineplot_intro <- renderPlot(plot_line(simulation_output, with_graph(full_contact_network, graph_order())))
   }, ignoreNULL = FALSE)
-
+  
   #### Sandbox ####
   shown_sandbox <<- FALSE
   observeEvent(input$main_navbar, ignoreInit=TRUE, {
@@ -481,7 +464,7 @@ server <- function(input, output, session){
                closeOnClickOutside=TRUE, html=TRUE, type="info")
   })
   observeEvent(input$recalc_sandbox, ignoreNULL = FALSE, {
-
+    
     if (!any(input$sandbox == "Household-Merging")) {
       between_household_transmission_rate_tmp <- NULL
       number_households_merged_tmp <- NULL
@@ -491,7 +474,7 @@ server <- function(input, output, session){
                           WITHIN_HOUSEHOLD_TRANSMISSION_RATE, n)
       number_households_merged_tmp <- input$number_households_merged + 1
     }
-
+    
     if (!any(input$sandbox == "In-person Schooling")) {
       classmate_transmission_rate_tmp <- NULL
       approx_classroom_size_tmp <- NULL
@@ -501,7 +484,7 @@ server <- function(input, output, session){
                           WITHIN_HOUSEHOLD_TRANSMISSION_RATE, n)
       approx_classroom_size_tmp <- input$approx_classroom_size
     }
-
+    
     if (!any(input$sandbox == "In-person Work")) {
       coworker_transmission_rate_tmp <- NULL
     } else {
@@ -509,7 +492,7 @@ server <- function(input, output, session){
         function(n) rep(input$coworker_transmission_rate *
                           WITHIN_HOUSEHOLD_TRANSMISSION_RATE, n)
     }
-
+    
     full_contact_network <- generate_contact_network(number_of_households=input$number_of_households,
                                                      # core layer: household transmission
                                                      within_household_transmission_rate=function(n) rep(WITHIN_HOUSEHOLD_TRANSMISSION_RATE, n),
@@ -518,7 +501,7 @@ server <- function(input, output, session){
                                                      classmate_transmission_rate=classmate_transmission_rate_tmp,
                                                      approx_classroom_size=approx_classroom_size_tmp,
                                                      coworker_transmission_rate=coworker_transmission_rate_tmp)
-
+    
     simulation_output <- run_disease_simulation_on_network(MAXTIME,
                                                            full_contact_network %E>% select(from, to) %>% as_tibble() %>% as.matrix() %>% subtract(1),
                                                            full_contact_network %>% with_graph(graph_order()) %>% subtract(1) %>% rep(0, .) %>% c(2) %>% sample(),
@@ -538,7 +521,7 @@ server <- function(input, output, session){
   # only show info on first open of tab
   shown_0 <<- shown_1 <<- shown_2 <<- shown_3 <<- FALSE
   observeEvent(input$main_navbar, ignoreInit=TRUE, {
-    if(input$main_navbar == "Focused Scenarios" & !shown_0) {
+    if (input$main_navbar == "Focused Scenarios" & !shown_0) {
       shinyalert("Stay-at-Home Order",
                  markdown(read_file("www/text/scenario_0_description.md")),
                  closeOnClickOutside=TRUE, html=TRUE, type="info")
@@ -654,7 +637,7 @@ server <- function(input, output, session){
                                                            full_contact_network %E>% as_tibble() %>% pull(weight),
                                                            get_background(input$background_transmission_rate),
                                                            1/input$sigma, input$rho, 1/input$gamma, input$mu, input$nu)
-
+    
     # write_data(input, simulation_output, "scenario")
     output$netplot <- renderPlot(plot_network(full_contact_network))
     output$areaplot <- renderPlot(plot_area(simulation_output, with_graph(full_contact_network, graph_order())))

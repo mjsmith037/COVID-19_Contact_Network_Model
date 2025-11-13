@@ -29,7 +29,7 @@ intelligently_assign_ages <- function(node_df) {
 # generate the household units (currently fully connected within households)
 # note: this allows for further fine-tuning of household structure
 generate_household_unit <- function(household_size) {
-  play_erdos_renyi(household_size, 1, directed=FALSE)
+  play_gnp(household_size, 1, directed=FALSE)
 }
 
 # add coworker links
@@ -57,7 +57,7 @@ add_employment_layer <- function(network, coworker_transmission_rate) {
                             "60 to 64 years")) %>%
     # account for unemployment
     # MN unemployment rate (May 2020): 9.4% (https://mn.gov/deed/data/current-econ-highlights/state-national-employment.jsp)
-    filter(rbernoulli(n(), 0.906)) %>%
+    filter(rbinom(n(), 1, 0.906) %>% as.logical()) %>%
     # assing to workplace of a particular size
     mutate(workplace_size = workplace_sizes %>%
     {sample(.$lower, n(), replace=TRUE, prob=.$proportion)}) %>%
@@ -180,12 +180,12 @@ generate_contact_network <- function(number_of_households=100,
              col_names=c("year", "total_households", "1", "2", "3", "4", "5", "6",
                          "7", # note actual heading here is "greater than 6"
                          "average_household_size")) %>%
-    summarise_at(vars(`1`, `2`, `3`, `4`, `5`, `6`, `7`),
+    summarise(across(c(`1`, `2`, `3`, `4`, `5`, `6`, `7`),
                  # note that this rounding can introduce slight deviations from
                  # the prescribed number of households
                  ~divide_by(., total_households) %>%
                    multiply_by(number_of_households) %>%
-                   round()) %>%
+                   round())) %>%
     as.vector() %>%
     rep(as.integer(names(.)), times=.)
 
@@ -208,21 +208,22 @@ generate_contact_network <- function(number_of_households=100,
 
   household_network %<>%
     activate(nodes) %>%
-    mutate(vulnerable = rbernoulli(
-      n(), case_when(age_class %in% c("Under 5 years", "5 to 9 years", "10 to 14 years", "15 to 19 years") ~
-                       case_fatality_distribution %>% filter(age == "0-19") %>% pull(hospitalization),
-                     age_class %in% c("20 to 24 years", "25 to 34 years", "35 to 44 years") ~
-                       case_fatality_distribution %>% filter(age == "20-44") %>% pull(hospitalization),
-                     age_class == "45 to 54 years" ~
-                       case_fatality_distribution %>% filter(age == "45-54") %>% pull(hospitalization),
-                     age_class %in% c("55 to 59 years", "60 to 64 years") ~
-                       case_fatality_distribution %>% filter(age == "55-64") %>% pull(hospitalization),
-                     age_class == "65 to 74 years" ~
-                       case_fatality_distribution %>% filter(age == "65-74") %>% pull(hospitalization),
-                     age_class == "75 to 84 years" ~
-                       case_fatality_distribution %>% filter(age == "75-84") %>% pull(hospitalization),
-                     age_class == "85 years and over" ~
-                       case_fatality_distribution %>% filter(age == "85+") %>% pull(hospitalization))))
+    mutate(vulnerable = rbinom(
+      n(), 1, case_when(age_class %in% c("Under 5 years", "5 to 9 years", "10 to 14 years", "15 to 19 years") ~
+                          case_fatality_distribution %>% filter(age == "0-19") %>% pull(hospitalization),
+                        age_class %in% c("20 to 24 years", "25 to 34 years", "35 to 44 years") ~
+                          case_fatality_distribution %>% filter(age == "20-44") %>% pull(hospitalization),
+                        age_class == "45 to 54 years" ~
+                          case_fatality_distribution %>% filter(age == "45-54") %>% pull(hospitalization),
+                        age_class %in% c("55 to 59 years", "60 to 64 years") ~
+                          case_fatality_distribution %>% filter(age == "55-64") %>% pull(hospitalization),
+                        age_class == "65 to 74 years" ~
+                          case_fatality_distribution %>% filter(age == "65-74") %>% pull(hospitalization),
+                        age_class == "75 to 84 years" ~
+                          case_fatality_distribution %>% filter(age == "75-84") %>% pull(hospitalization),
+                        age_class == "85 years and over" ~
+                          case_fatality_distribution %>% filter(age == "85+") %>% pull(hospitalization))) %>%
+        as.logical())
 
   # there are several ways we can model an underlying baseline risk of infection:
   # 1) we can add a fully connected network layer (with relatively small weights)
